@@ -9,7 +9,10 @@ snakelocation::snakelocation(){
   x = 0;
   y = 0;
 }
-snakeclass::snakeclass(vector<snakelocation>body){
+snake::snake(){
+  
+}
+snake::snake(vector<snakelocation>body){
   initscr();
   nodelay(stdscr,true);
   keypad(stdscr,true);
@@ -18,7 +21,8 @@ snakeclass::snakeclass(vector<snakelocation>body){
   del = 50000;
   head = body[0];
   tail = vector<snakelocation>(body.begin()+1, body.end());
-  length = body.size();
+  length = body.size(); // vector size?
+  snake.push_back(snakelocation(40+i,40));
   direction = 'l';
   for(int i=0; i<length; i++){
     move(snake[i].y,snake[i].x);
@@ -26,13 +30,13 @@ snakeclass::snakeclass(vector<snakelocation>body){
   }
 
 }
-snakeclass::~snakeclass(){
+snake::~snake(){
   nodelay(stdscr,false);
   getch();
   endwin();
 }
-void snakeclass::movesnake(){
-  int tmp = getch()
+void snake::movesnake(){
+  int tmp = getch();
   switch(tmp){
     case KEY_LEFT:
     if(direction != 'r')
@@ -56,13 +60,13 @@ void snakeclass::movesnake(){
 
   }
   if(direction=='l')
-    snake.insert(snake.begin(), snakepart(snake[0].x-1, snake[0].y));
+    snake.insert(snake.begin(), snakelocation(snake[0].x-1, snake[0].y));
     else if(direction=='r')
-    snake.insert(snake.begin(), snakepart(snake[0].x+1, snake[0].y));
+    snake.insert(snake.begin(), snakelocation(snake[0].x+1, snake[0].y));
     else if(direction=='u')
-    snake.insert(snake.begin(), snakepart(snake[0].x, snake[0].y-1));
+    snake.insert(snake.begin(), snakelocation(snake[0].x, snake[0].y-1));
     else if(direction=='d')
-    snake.insert(snake.begin(), snakepart(snake[0].x, snake[0].y+1));
+    snake.insert(snake.begin(), snakelocation(snake[0].x, snake[0].y+1));
     move(snake[0].y,snake[0].x);
     addch(partchar);
     refresh();
@@ -70,7 +74,7 @@ void snakeclass::movesnake(){
 
 }
 
-void snakeclass::start(){
+void snake::start(){
   while(1){
     if(collision()){
       move(12,36);

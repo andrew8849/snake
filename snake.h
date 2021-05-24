@@ -1,5 +1,5 @@
 #include <unistd.h>
-#include <studio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include<iostream>
 #include<vector>
@@ -10,22 +10,22 @@
 
 struct snakelocation{
   int y, x;
-  snakepart(int col, int row);
-  snakepart();
+  snakelocation(int col, int row);
+  snakelocation();
 };
-struct snakeclass{
+struct snake{
   int del;
-  char direction, partchar. oldalchar, foo;
+  char direction, partchar, oldalchar, foo;
   bool get;
   snakelocation food;
   snakelocation head;
+  //std::vector<snakelocation> snake;
   std::vector<snakelocation> tail;
-  snakeclass();
-  snakeclass(std::vector<snakelocationt> body);
 public:
-  snakeclass();
-  ~snakeclass();
-  void start;
+  snake(); //additional vector declaration?
+  snake(std::vector<snakelocation> body);
+  ~snake();
+  void start();
 };
 
 #endif
