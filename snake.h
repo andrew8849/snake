@@ -14,18 +14,37 @@ struct snakelocation{
   snakelocation();
 };
 struct snake{
-  int del;
-  char direction, partchar, oldalchar, foo;
+  int del;//delay -> 0.5 sec or tick?
+  int direction, partchar, oldalchar, foo;
   bool get;
+  int length;
   snakelocation food;
   snakelocation head;
   //std::vector<snakelocation> snake;
   std::vector<snakelocation> tail;
-public:
+
   snake(); //additional vector declaration?
   snake(std::vector<snakelocation> body);
-  ~snake();
-  void start();
+  
 };
 
+class movingsnake{
+  private:
+  //int
+  snake food;
+  std::vector<snake> fullsnake;
+  void movesnake();
+  void drawsnake();
+  void placefood();
+  bool fruitplus();
+  bool poisonminus();
+  void collision();
+  void start();
+
+
+  public:
+  movingsnake();
+  ~movingsnake();
+  void start();
+};
 #endif

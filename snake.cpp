@@ -10,6 +10,8 @@ snakelocation::snakelocation(){
   y = 0;
 }
 snake::snake(){
+  length = 0;
+  direction = 'l';
   
 }
 snake::snake(vector<snakelocation>body){
@@ -24,18 +26,21 @@ snake::snake(vector<snakelocation>body){
   length = body.size(); // vector size?
   snake.push_back(snakelocation(40+i,40));
   direction = 'l';
-  for(int i=0; i<length; i++){
-    move(snake[i].y,snake[i].x);
-    addch(partchar);
   }
 
 }
-snake::~snake(){
+movingsnake::~movingsnake(){
   nodelay(stdscr,false);
   getch();
   endwin();
 }
-void snake::movesnake(){
+void movingsnake::drawsnake(){
+  for(int i=0; i<length; i++){
+    move(snake[i].y,snake[i].x);
+    addch(partchar);
+}
+
+void movingsnake::movesnake(){
   int tmp = getch();
   switch(tmp){
     case KEY_LEFT:
@@ -54,6 +59,7 @@ void snake::movesnake(){
     if(direction != 'l')
     direction = 'r';
     break;
+
     case KEY_BACKSPACE:
     direction = 'q';
     break;
@@ -74,7 +80,12 @@ void snake::movesnake(){
 
 }
 
-void snake::start(){
+void movingsnake::collision(){
+  //check snakehead
+  //opreventing collision
+}
+
+void movingsnake::start(){
   while(1){
     if(collision()){
       move(12,36);
