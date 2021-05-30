@@ -77,13 +77,40 @@ void movingsnake::movesnake(){
     addch(partchar);
     refresh();
 
+  if(!eatfruit){
+    move(snake[snake.size()-1].y, snake[snake.size()-1].x);
+    printw("□");
+    refresh;
+    snake.pop_back();
+  }
 
+
+}
+void movingsnake::fruitplus(){
+  if(snake[0].x == fruit.x && snake[0].y ==fruit.y){
+    return eatfruit = True;
+  }
+  else{
+    return eatfruit = False;
+  }
+  return eatfruit;
 }
 
 void movingsnake::collision(){
   //check snakehead
   //opreventing collision
+  //snake head == snake body 
+    if (snake[0].y < 1 || snake[0].y > MapSize_Y || snake[0].x < 1 || snake[0].x > MapSize_X)
+        return true;
+
+    for (int i=3; i<snake.size(); i++) {
+        if (snake[0].x==snake[i].x && snake[i].y == snake[0].y) {
+            return true;
+        }
+    }
+    return false;
 }
+
 
 void movingsnake::start(){
   while(1){

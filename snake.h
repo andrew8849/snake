@@ -30,6 +30,7 @@ struct snake{
 
 class movingsnake{
   private:
+  bool eatfruit;
   //int
   snake food;
   std::vector<snake> fullsnake;
