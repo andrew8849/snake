@@ -1,26 +1,56 @@
 #include "snake.h"
+
 using namespace std;
 
-snakelocation::snakelocation(int col, int row){
+snakeloc::snakeloc(int col, int row){
   x = col;
   y = row;
 }
-snakelocation::snakelocation(){
+snakeloc::snakeloc(){
   x = 0;
   y = 0;
 }
-snake::snake(){
-  length = 0;
+snakeclass::snakeclass(){
+  partchar = 'x';
+  length = 3;
   direction = 'l';
-  
-}
-snake::snake(vector<snakelocation>body){
-  initscr();
+  del = 50000;
+   initscr();
   nodelay(stdscr,true);
   keypad(stdscr,true);
   noecho();
   curs_set(0);
-  del = 50000;
+  getmaxyx(stdscr, maxheight, maxwidth); // define dimensions of game window
+
+
+
+drawsnake();
+movesnake();
+//placefood();
+fruitplus();
+//poisonminus();
+collision();
+refresh();
+}
+snakeclass::~snakeclass(){
+  nodelay(stdscr,false);
+  getch();
+  endwin();
+}
+
+void snakeclass::drawsnake(){
+  for(int i=0; i<5; i++){
+    snakebody.push_back(snakeloc(30+i,10));
+  }
+  for(int i=0; i<snakebody.size(); i++){
+    move(snakebody[i].y,snakebody[i].x);
+    addch(partchar);
+}
+return;
+}
+/*
+snakeclass::snakeclass(vector<snakeloc>snakebody){
+  
   head = body[0];
   tail = vector<snakelocation>(body.begin()+1, body.end());
   length = body.size(); // vector size?
@@ -29,27 +59,16 @@ snake::snake(vector<snakelocation>body){
   }
 
 }
-movingsnake::~movingsnake(){
-  nodelay(stdscr,false);
-  getch();
-  endwin();
-}
-void movingsnake::drawsnake(){
-  for(int i=0; i<length; i++){
-    move(snake[i].y,snake[i].x);
-    addch(partchar);
-}
 
-void movingsnake::movesnake(){
+*/
+void snakeclass::movesnake(){
   int tmp = getch();
   switch(tmp){
     case KEY_LEFT:
-    if(direction != 'r')
-    direction = 'l';
+    if(direction != 'r'){direction = 'l';}
     break;
     case KEY_UP:
-    if(direction != 'd')
-    direction = 'u';
+    if(direction != 'd'){direction = 'u';}
     break;
     case KEY_DOWN:
     if(direction != 'u')
@@ -66,45 +85,45 @@ void movingsnake::movesnake(){
 
   }
   if(direction=='l')
-    snake.insert(snake.begin(), snakelocation(snake[0].x-1, snake[0].y));
+    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x-1, snakebody[0].y));
     else if(direction=='r')
-    snake.insert(snake.begin(), snakelocation(snake[0].x+1, snake[0].y));
+    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x+1, snakebody[0].y));
     else if(direction=='u')
-    snake.insert(snake.begin(), snakelocation(snake[0].x, snake[0].y-1));
+    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x, snakebody[0].y-1));
     else if(direction=='d')
-    snake.insert(snake.begin(), snakelocation(snake[0].x, snake[0].y+1));
-    move(snake[0].y,snake[0].x);
+    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x, snakebody[0].y+1));
+    move(snakebody[0].y,snakebody[0].x);
     addch(partchar);
     refresh();
 
   if(!eatfruit){
-    move(snake[snake.size()-1].y, snake[snake.size()-1].x);
+    move(snakebody[snakebody.size()-1].y, snakebody[snakebody.size()-1].x);
     printw("□");
     refresh;
-    snake.pop_back();
+    snakebody.pop_back();
   }
 
 
 }
-void movingsnake::fruitplus(){
-  if(snake[0].x == fruit.x && snake[0].y ==fruit.y){
-    return eatfruit = True;
+bool snakeclass::fruitplus(){
+  if(snakebody[0].x == fruit.x && snakebody[0].y ==fruit.y){
+    return eatfruit = true;
   }
   else{
-    return eatfruit = False;
+    return eatfruit = false;
   }
-  return eatfruit;
+  return 0;
 }
 
-void movingsnake::collision(){
+bool snakeclass::collision(){
   //check snakehead
   //opreventing collision
   //snake head == snake body 
-    if (snake[0].y < 1 || snake[0].y > MapSize_Y || snake[0].x < 1 || snake[0].x > MapSize_X)
-        return true;
+    if (snakebody[0].y < 1 || snakebody[0].y > 21 || snakebody[0].x < 1 || snakebody[0].x > 21)
+        return true; //MapSize_X, MapSize_Y
 
-    for (int i=3; i<snake.size(); i++) {
-        if (snake[0].x==snake[i].x && snake[i].y == snake[0].y) {
+    for (int i=3; i<snakebody.size(); i++) {
+        if (snakebody[0].x==snakebody[i].x && snakebody[i].y == snakebody[0].y) {
             return true;
         }
     }
@@ -112,11 +131,11 @@ void movingsnake::collision(){
 }
 
 
-void movingsnake::start(){
+void snakeclass::start(){
   while(1){
     if(collision()){
       move(12,36);
-      printw("gameend")
+      printw("gameend");
       break;
     }
     movesnake();

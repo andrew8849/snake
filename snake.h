@@ -5,47 +5,49 @@
 #include<vector>
 #include <ncurses.h>
 #include <cstdlib>
+#include <ctime>
+
 #ifndef SNAKE_H
 #define SNAKE_H
 
-struct snakelocation{
-  int y, x;
-  snakelocation(int col, int row);
-  snakelocation();
-};
-struct snake{
-  int del;//delay -> 0.5 sec or tick?
-  int direction, partchar, oldalchar, foo;
-  bool get;
+
+struct snakeloc{
+int y,x;
+snakeloc(int col, int row);
+snakeloc();
+
+}; //location of snake
+
+class snakeclass{
+private:
+int del;//delay -> 0.5 sec or tick?
+int partchar,maxwidth, maxheight;
+snakeloc fruit;
+snakeloc poison;
+  char direction;
   int length;
-  snakelocation food;
-  snakelocation head;
-  //std::vector<snakelocation> snake;
-  std::vector<snakelocation> tail;
-
-  snake(); //additional vector declaration?
-  snake(std::vector<snakelocation> body);
-  
-};
-
-class movingsnake{
-  private:
-  bool eatfruit;
-  //int
-  snake food;
-  std::vector<snake> fullsnake;
-  void movesnake();
+bool eatfruit;
+bool eatpoison;
+snakeloc head;
+std::vector<snakeloc> snakebody;
+ void movesnake();
   void drawsnake();
-  void placefood();
+//  void placefood();
   bool fruitplus();
-  bool poisonminus();
-  void collision();
-  void start();
-
-
-  public:
-  movingsnake();
-  ~movingsnake();
-  void start();
+ // bool poisonminus();
+  bool collision();
+public:
+snakeclass();
+~snakeclass();
+void start();
 };
 #endif
+
+  /*snakelocation food;
+  snakelocation head;
+  std::vector<snakelocation> snake;
+  std::vector<snakelocation> tail;
+
+
+  snake(); //additional vector declaration?
+  snake(std::vector<snakelocation> body);*/
