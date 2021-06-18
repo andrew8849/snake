@@ -29,6 +29,7 @@ int main(){
   resize_term(100, 100);  // 윈도우 사이즈 설정
 
   char Key; // 키입력을 받기위한 변수
+  struct two_Point gate;
   while(Key!=27){ // ESC입력시 while문 탈출
       curs_set(0);
       timeout(1);
@@ -36,7 +37,7 @@ int main(){
       // 화면에 맵 그리기.
       printScreen(test);
       refresh();
-      noecho();
+      //noecho();
       Key = getch();
       while(getch()!=EOF);
       usleep(500000);
@@ -44,7 +45,16 @@ int main(){
       map.init_map(); // 맵 초기화
       map.item_create(false); // 독 생성  [뱀 길이 줄어듦]
       map.item_create(true);  // 하트 생성   [뱀 길이 늘어남]
-      map.gate_create();  // 게이트 생성
+      gate = map.gate_create();  // 게이트 생성
+      string tmp(to_string(gate.p1.x));
+      mvprintw(0,0,tmp.c_str());
+      tmp = to_string(gate.p1.y);
+      mvprintw(0,5,tmp.c_str());
+      tmp = to_string(gate.p2.x);
+      mvprintw(1,0,tmp.c_str());
+      tmp = to_string(gate.p2.y);
+      mvprintw(1,5,tmp.c_str());
+
   }
   endwin();
   return 0;

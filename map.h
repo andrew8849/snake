@@ -15,6 +15,9 @@ private:
   int MapSize_X = 21;
   // 맵 배열
   char ***map_arr;
+  // 아이템 갯수
+  int heart_count = 0;
+  int poison_count = 0;
 
 public:
   // 생성자 맵 사이즈 받아서 생성
@@ -28,16 +31,32 @@ public:
   }
 
   // 기타 함수
-  char ***get_map() const;
-  void init_map();
-  void push_map(int x,int y, char* str);
-  void item_create(bool item_type);
-  void gate_create();
+  char ***get_map() const; // 맵전체 문자열 받아오는 함수
+  void init_map(); //맵전체를 기본맵으로 초기화 하는 함수
+  void push_map(int x,int y, char* str); // 맵 배열에 str을 넣는 함수
+  struct Point item_create(bool item_type); // 아이템 생성해서 맵에 삽입하는 함수
+  void delete_item(bool item_type); // 아이템 갯수 -1 해주는 함수
+  struct two_Point gate_create(); // 게이트 생성해서 맵에 삽입하는 함수
+  char* get_position(int x, int y); // 맵에서 x,y에 어떤 문자열인지 리턴해주는 함수
 };
 
 struct Point{
-  int x;
-  int y;
+  int x = 0;
+  int y = 0;
+  Point(int _x, int _y) : x(_x), y(_y){};
+  Point(){};
+};
+
+struct two_Point{
+  struct Point p1;
+  struct Point p2;
+  two_Point(struct Point _p1, struct Point _p2){
+    p1.x = _p1.x;
+    p1.y = _p1.y;
+    p2.x = _p2.x;
+    p2.y = _p2.y;
+  };
+  two_Point(){};
 };
 
 #endif
