@@ -45,7 +45,6 @@ int main(){
       map.item_create(false); // 독 생성  [뱀 길이 줄어듦]
       map.item_create(true);  // 하트 생성   [뱀 길이 늘어남]
       map.gate_create();  // 게이트 생성
-
   }
   endwin();
   return 0;
