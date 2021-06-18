@@ -1,41 +1,46 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include<iostream>
-#include<vector>
+#include <iostream>
+#include <vector>
 #include <ncurses.h>
 #include <cstdlib>
 #include <ctime>
-
 #ifndef SNAKE_H
 #define SNAKE_H
 
-
 struct snakeloc{
 int y,x;
-snakeloc(int col, int row);
 snakeloc();
+snakeloc(int col, int row);
+
 
 }; //location of snake
 
 class snakeclass{
 private:
-int del;//delay -> 0.5 sec or tick?
-int partchar,maxwidth, maxheight;
+int del;//delay -> 0.5 sec or tick 50000
+int body;//character representing snake's body
+int snakelength;//snake's length
+int snakemaxlength;//snake's maximum length
+int fruitscore, poisonscore; //for scoreboard
+int direction;//snake's direction
+int height, width; // map height, width
+int maxheight,maxwidth;
 snakeloc fruit;
 snakeloc poison;
-  char direction;
-  int length;
 bool eatfruit;
 bool eatpoison;
-snakeloc head;
-std::vector<snakeloc> snakebody;
- void movesnake();
-  void drawsnake();
-//  void placefood();
-  bool fruitplus();
- // bool poisonminus();
-  bool collision();
+bool sidewall; // immune wall
+snakeloc snakehead;
+std::vector<snakeloc> snaketail;
+std::vector<snakeloc> snakebody;//represents all parts of snake's body
+void makesnake();
+void drawsnake();
+void movesnake();
+bool collision();
+bool fruitplus();
+//bool poisonminus();
 public:
 snakeclass();
 ~snakeclass();

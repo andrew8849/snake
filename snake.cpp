@@ -2,35 +2,29 @@
 
 using namespace std;
 
-snakeloc::snakeloc(int col, int row){
-  x = col;
-  y = row;
-}
 snakeloc::snakeloc(){
   x = 0;
   y = 0;
 }
+snakeloc::snakeloc(int col, int row){
+  y = col;
+  x = row;
+}
+
 snakeclass::snakeclass(){
-  partchar = 'x';
-  length = 3;
+  body = 'x';
+  snakelength = 3;
   direction = 'l';
+  fruit.x = 0;
+  fruit.y = 0;
   del = 50000;
-   initscr();
-  nodelay(stdscr,true);
-  keypad(stdscr,true);
-  noecho();
-  curs_set(0);
-  getmaxyx(stdscr, maxheight, maxwidth); // define dimensions of game window
-
-
-
-drawsnake();
-movesnake();
-//placefood();
-fruitplus();
-//poisonminus();
-collision();
-refresh();
+  getmaxyx(stdscr,maxheight,maxwidth);
+  drawsnake();
+  movesnake();
+  collision();
+  fruitplus();
+  //poisonminus();
+  //refresh();
 }
 snakeclass::~snakeclass(){
   nodelay(stdscr,false);
@@ -39,28 +33,16 @@ snakeclass::~snakeclass(){
 }
 
 void snakeclass::drawsnake(){
-  for(int i=0; i<5; i++){
+  for(int i=0; i<3; i++){
     snakebody.push_back(snakeloc(30+i,10));
   }
   for(int i=0; i<snakebody.size(); i++){
     move(snakebody[i].y,snakebody[i].x);
-    addch(partchar);
+    addch(body);
 }
 return;
 }
-/*
-snakeclass::snakeclass(vector<snakeloc>snakebody){
-  
-  head = body[0];
-  tail = vector<snakelocation>(body.begin()+1, body.end());
-  length = body.size(); // vector size?
-  snake.push_back(snakelocation(40+i,40));
-  direction = 'l';
-  }
 
-}
-
-*/
 void snakeclass::movesnake(){
   int tmp = getch();
   switch(tmp){
@@ -78,30 +60,33 @@ void snakeclass::movesnake(){
     if(direction != 'l')
     direction = 'r';
     break;
-
-    case KEY_BACKSPACE:
-    direction = 'q';
-    break;
-
   }
-  if(direction=='l')
-    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x-1, snakebody[0].y));
-    else if(direction=='r')
-    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x+1, snakebody[0].y));
-    else if(direction=='u')
-    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x, snakebody[0].y-1));
-    else if(direction=='d')
-    snakebody.insert(snakebody.begin(), snakeloc(snakebody[0].x, snakebody[0].y+1));
-    move(snakebody[0].y,snakebody[0].x);
-    addch(partchar);
-    refresh();
-
-  if(!eatfruit){
+  if(direction=='l'){
+    snaketail.insert(snaketail.begin(), snakehead);
+    snakehead = snakeloc(snakehead.y-1,snakehead.x);
+  }
+  else if(direction=='r'){
+    snaketail.insert(snaketail.begin(), snakehead);
+    snakehead = snakeloc(snakehead.y,snakehead.x);
+  }
+  else if(direction=='u'){
+    snaketail.insert(snaketail.begin(), snakehead);
+    snakehead = snakeloc(snakehead.y-1,snakehead.x);
+  }
+  else if(direction=='d'){
+    snaketail.insert(snaketail.begin(), snakehead);
+    snakehead = snakeloc(snakehead.y-1,snakehead.x);
+  }
+  move(snakehead.y,snakehead.x);
+  addch(' ');
+  refresh();
+  if(!fruitplus()){
     move(snakebody[snakebody.size()-1].y, snakebody[snakebody.size()-1].x);
-    printw("□");
+    printw(" ");
     refresh;
     snakebody.pop_back();
   }
+  return;
 
 
 }
@@ -119,10 +104,11 @@ bool snakeclass::collision(){
   //check snakehead
   //opreventing collision
   //snake head == snake body 
+
     if (snakebody[0].y < 1 || snakebody[0].y > 21 || snakebody[0].x < 1 || snakebody[0].x > 21)
         return true; //MapSize_X, MapSize_Y
 
-    for (int i=3; i<snakebody.size(); i++) {
+    for (int i=0; i<snakebody.size(); i++) {
         if (snakebody[0].x==snakebody[i].x && snakebody[i].y == snakebody[0].y) {
             return true;
         }
