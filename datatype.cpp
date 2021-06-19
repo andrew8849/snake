@@ -7,6 +7,10 @@ struct Point{
     if(p.x==x && p.y==y) return true;
     return false;
   }
+
+  Point operator-(Point p){
+    return Point(x-p.x, y-p.y);
+  }
 };
 
 struct two_Point{

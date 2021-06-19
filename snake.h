@@ -11,9 +11,11 @@ private:
   struct Point tail;
   vector<Point> body;
   unsigned int size;
-  char direction = 'l';
+
 public:
+  char direction = 'l';
   snake(int x, int y);
+  void sethead(Point p);
   void getItem(bool item_type);
   void move();
   bool crash_check();

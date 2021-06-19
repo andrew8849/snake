@@ -10,10 +10,17 @@ snake::snake(int x, int y){
   body.push_back(Point(x+2,y));
   body.push_back(Point(x+3,y));
 }
+void snake::sethead(Point p){
+  body[0] = p;
+  head = p;
+}
 
 void snake::getItem(bool item_type){
   if(item_type){
     body.push_back(tail);
+  }
+  else{
+    body.pop_back();
   }
 }
 
@@ -57,16 +64,16 @@ bool snake::crash_check(){
 void snake::set_direction(char direct){
   switch(direct){
     case 'a':
-      direction = 'l';
+      if(direction != 'r') direction = 'l';
       break;
     case 'w':
-      direction = 'u';
+      if(direction != 'd') direction = 'u';
       break;
     case 'd':
-      direction = 'r';
+      if(direction != 'l') direction = 'r';
       break;
     case 's':
-      direction = 'd';
+      if(direction != 'u') direction = 'd';
       break;
   }
 };
