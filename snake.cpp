@@ -81,3 +81,6 @@ void snake::set_direction(char direct){
 vector<Point> snake::get_body(){
   return body;
 }
+int snake::get_size(){
+  return body.size();
+}

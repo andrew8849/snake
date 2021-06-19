@@ -23,7 +23,9 @@ map::map(int X, int Y) :MapSize_X(X),MapSize_Y(Y){
   }
   init_map();
 }
-
+void map::setstage(int num){
+  stage = num;
+}
 void map::init_map(){
   if(stage == 1){
     for(int i = 0 ; i<MapSize_Y; i++){
@@ -36,6 +38,20 @@ void map::init_map(){
     for(int i = 0 ; i<MapSize_Y; i++){
       for(int j = 0 ; j<MapSize_X; j++){
         strcpy(map_arr[i][j],stage_2[i][j]);
+      }
+    }
+  }
+  else if(stage == 3){
+    for(int i = 0 ; i<MapSize_Y; i++){
+      for(int j = 0 ; j<MapSize_X; j++){
+        strcpy(map_arr[i][j],stage_3[i][j]);
+      }
+    }
+  }
+  else if(stage == 4){
+    for(int i = 0 ; i<MapSize_Y; i++){
+      for(int j = 0 ; j<MapSize_X; j++){
+        strcpy(map_arr[i][j],stage_4[i][j]);
       }
     }
   }

@@ -13,6 +13,7 @@ private:
   unsigned int size;
 
 public:
+  ~snake(){};
   char direction = 'l';
   snake(int x, int y);
   void sethead(Point p);
@@ -21,5 +22,6 @@ public:
   bool crash_check();
   void set_direction(char direct);
   vector<Point> get_body();
+  int get_size();
 };
 #endif

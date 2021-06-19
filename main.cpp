@@ -11,7 +11,7 @@ struct map_size{
   int y;
 };
 struct map_size map_size;
-
+unsigned int warptime = 0;
 void printScreen(char ***map);
 void push_snake(snake &snake, map &map);
 void push_item(map& map, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate);
@@ -30,27 +30,51 @@ int main(){
   init_pair(1,COLOR_YELLOW,COLOR_BLACK);
   bkgd(COLOR_PAIR(1));
   resize_term(100, 100);  // 윈도우 사이즈 설정
-
+/*
   snake snake(map_size.x/2+1,map_size.y/2+1);
   vector<Point> heart;
   vector<Point> poison;
   vector<two_Point> gate;
   char Key; // 키입력을 받기위한 변수
+  unsigned int tick_heart = 0;
+  unsigned int tick_poison = 0;
+  unsigned int tick_gate = 0;
+  int stage = 1;*/
+  char Key; // 키입력을 받기위한 변수
+  int stage = 1;
+  vector<Point> heart;
+  vector<Point> poison;
+  vector<two_Point> gate;
+
+  unsigned int tick_heart = 0;
+  unsigned int tick_poison = 0;
+  unsigned int tick_gate = 0;
+while(Key!=27){
+  snake *Snake = new snake(map_size.x/2+1,map_size.y/2+1);
+  heart.clear();
+  poison.clear();
+  gate.clear();
+  tick_heart = 0;
+  tick_poison = 0;
+  tick_gate = 0;
   while(Key!=27){ // ESC입력시 while문 탈출
       curs_set(0);
       timeout(1);
       map.init_map(); // 맵 초기화
-      push_snake(snake, map);
-      if(map.heart_count == 0){
+      push_snake(*Snake, map);
+      if(heart.size() == 0){
         heart.push_back(map.item_create(true));  // 하트 생성  [뱀 길이 늘어남]
+        tick_heart = 0;
       }
-      if(map.poison_count == 0){
+      if(poison.size() == 0){
         poison.push_back(map.item_create(false));
+        tick_poison = 0;
       }
       if(gate.size()==0){
         gate.push_back(map.gate_create());
+        tick_gate = 0;
       }
-      push_snake(snake, map);
+      push_snake(*Snake, map);
       push_item(map, heart, poison, gate);
       test = map.get_map();
       // 화면에 맵 그리기.
@@ -59,18 +83,33 @@ int main(){
       noecho();
       usleep(300000);
       Key = getch();
-      snake.set_direction(Key);
+      Snake->set_direction(Key);
       while(getch()!=EOF);
       clear();
 
-      snake.move();
-      if(snake.crash_check()) break;
-      else if(crash_check(map, snake, heart, poison, gate)){
+      Snake->move();
+      if(Snake->get_size()>15 && stage <3){
+        map.setstage(++stage);
         break;
       }
+      else if(Snake->crash_check()) { map.setstage(1);stage=1; break;}
+      else if(crash_check(map, *Snake, heart, poison, gate)){
+        map.setstage(1);
+        stage =1;
+        break;
+      }
+      tick_heart++;
+      tick_poison++;
+      tick_gate++;
+      if(tick_heart > 20+random()%30) heart.pop_back();
+      if(tick_poison > 20) poison.pop_back();
+      if(tick_gate > 20+warptime) {gate.pop_back(); warptime=0;}
   }
+  delete Snake;
   refresh();
   endwin();
+}
+
   return 0;
 }
 
@@ -90,10 +129,10 @@ void push_snake(snake &snake, map &map){
 }
 
 void push_item(map& map, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate){
-    for(int i = 0; i<map.heart_count;i++){
+    for(int i = 0; i<heart.size();i++){
       map.push_map(heart[i].x,heart[i].y,"♥");
     }
-    for(int i = 0; i<map.poison_count;i++){
+    for(int i = 0; i<poison.size();i++){
       map.push_map(poison[i].x,poison[i].y,"☠");
     }
     for(int i = 0; i<gate.size();i++){
@@ -122,6 +161,7 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
     }
   }
   if(strcmp(map.get_position(body[0].x, body[0].y),"⬚")==0){
+    warptime += body.size();
     Point tmp;
     for(int i=0; i<gate.size();i++){
       if(gate[i].p1 == body[0]) {tmp = gate[i].p2; break;}
@@ -247,8 +287,6 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
         snake.set_direction('s');
       }
     }
-
-
   }
 
   if(body.size()<3) return true;
