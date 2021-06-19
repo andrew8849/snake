@@ -14,8 +14,14 @@ struct map_size map_size;
 
 void printScreen(char ***map);
 void push_snake(snake &snake, map &map);
+<<<<<<< HEAD
 void push_item(map& map, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate);
 bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate);
+=======
+void push_item(map& map, vector<Point> &heart, vector<Point> &poison);
+void crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &poison);
+int startscreen();
+>>>>>>> e6212e2b4eb51978c290822c82dd0909d7a33230
 int main(){
   WINDOW *main_screen;  // 윈도우 생성
   map_size.x=12;  // 맵 기본사이즈 설정
@@ -36,6 +42,16 @@ int main(){
   vector<Point> poison;
   vector<two_Point> gate;
   char Key; // 키입력을 받기위한 변수
+<<<<<<< HEAD
+=======
+  struct two_Point gate;
+
+
+  if(startscreen() == 'y'){
+  //do-while?
+
+
+>>>>>>> e6212e2b4eb51978c290822c82dd0909d7a33230
   while(Key!=27){ // ESC입력시 while문 탈출
       curs_set(0);
       timeout(1);
@@ -76,6 +92,7 @@ int main(){
       else if(crash_check(map, snake, heart, poison, gate)){
         break;
       }
+  }
   }
   string tmp(to_string(Key));
   mvprintw(0,0,tmp.c_str());
@@ -237,3 +254,31 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
   }
   return false;
 }
+
+int startscreen(){
+  clear();
+  initscr();
+  move(10,13);
+  printw("start game? (y/n)");
+  int gameinput = getch();
+  refresh();
+  endwin();
+  clear();
+
+  return gameinput;
+}
+/*
+void ScoreBoard(){
+  int ScoreBoard = newwin( 15, 15, 30, 1); // 행크기, 열크기, xy좌표
+  int MissionBoard = newwin(15,15,30, 15);
+  box(ScoreBoard, 1,1);//세로, 가로 경계선 스타일
+  box(MissionBoard, 1,1);
+  mvwprintw(ScoreBoard, 0, 1, "ScoreBoard");
+  mvwprintw(MissionBoard, 0, 1, "MissionBoard");
+  //Board_b = body.length() + "/" +body.maxlength();
+  //mvprintw(scoreBoard, 2,2, b)
+  //행렬로 단계별 mission value받아오기
+
+
+
+}*/
