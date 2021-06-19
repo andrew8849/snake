@@ -10,7 +10,6 @@ map::map(){
        }
     }
     init_map();
-
 }
 
 map::map(int X, int Y) :MapSize_X(X),MapSize_Y(Y){
@@ -48,7 +47,7 @@ void map::init_map(){
 char ***map::get_map() const{
   return map_arr;
 }
-void map::push_map(int x,int y,char* str){
+void map::push_map(int x,int y,const char* str){
   strcpy(map_arr[y-1][x-1],str);
 }
 
@@ -57,12 +56,15 @@ struct Point map::item_create(bool item_type){
   mt19937 gen(rd());
   uniform_int_distribution<int> Y(1,MapSize_Y-2); // 아이템 랜덤 위치 Y값
   uniform_int_distribution<int> X(1,MapSize_X-2); // 아이템 랜덤 위치 X값
-  int y=Y(gen);
-  int x=X(gen);
-  if(item_type) {strcpy(map_arr[y][x],"♥"); heart_count++;} // 하트아이템 갯수 +1 및 하트아이템 맵에 넣기
-  else if(!item_type) {strcpy(map_arr[y][x],"☠"); poison_count++;}  // 포이즌 아이템 갯수 +1 및 포이즌 아이템 맵에 넣기
-  struct Point p(x,y);
-  return p;
+  int y;
+  int x;
+  do{
+    y=Y(gen);
+    x=X(gen);
+  }while(strcmp(map_arr[y][x],"□") != 0); // 해당 위치가 빈 공간일 때만 아이템 생성
+  if(item_type) {heart_count++;} // 하트아이템 갯수 +1 및 하트아이템 맵에 넣기
+  else if(!item_type) {poison_count++;}  // 포이즌 아이템 갯수 +1 및 포이즌 아이템 맵에 넣기
+  return Point(x,y);
 }
 
 void map::delete_item(bool item_type){

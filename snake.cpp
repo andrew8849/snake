@@ -2,131 +2,75 @@
 
 using namespace std;
 
-snakeloc::snakeloc(){
-  x = 0;
-  y = 0;
-}
-snakeloc::snakeloc(int col, int row){
-  y = col;
-  x = row;
-}
-
-snakeclass::snakeclass(){
-  body = 'x';
-  snakelength = 3;
-  direction = 'l';
-  fruit.x = 0;
-  fruit.y = 0;
-  del = 50000;
-  getmaxyx(stdscr,maxheight,maxwidth);
-  drawsnake();
-  movesnake();
-  collision();
-  fruitplus();
-  //poisonminus();
-  //refresh();
-}
-snakeclass::~snakeclass(){
-  nodelay(stdscr,false);
-  getch();
-  endwin();
+snake::snake(int x, int y){
+  struct Point head(x-1,y);
+  body.push_back(head);
+  body.push_back(Point(x,y));
+  body.push_back(Point(x+1,y));
+  body.push_back(Point(x+2,y));
+  body.push_back(Point(x+3,y));
 }
 
-void snakeclass::drawsnake(){
-  for(int i=0; i<3; i++){
-    snakebody.push_back(snakeloc(30+i,10));
+void snake::getItem(bool item_type){
+  if(item_type){
+    body.push_back(tail);
   }
-  for(int i=0; i<snakebody.size(); i++){
-    move(snakebody[i].y,snakebody[i].x);
-    addch(body);
-}
-return;
 }
 
-void snakeclass::movesnake(){
-  int tmp = getch();
-  switch(tmp){
-    case KEY_LEFT:
-    if(direction != 'r'){direction = 'l';}
-    break;
-    case KEY_UP:
-    if(direction != 'd'){direction = 'u';}
-    break;
-    case KEY_DOWN:
-    if(direction != 'u')
-    direction = 'd';
-    break;
-    case KEY_RIGHT:
-    if(direction != 'l')
-    direction = 'r';
-    break;
-  }
-  if(direction=='l'){
-    snaketail.insert(snaketail.begin(), snakehead);
-    snakehead = snakeloc(snakehead.y-1,snakehead.x);
-  }
-  else if(direction=='r'){
-    snaketail.insert(snaketail.begin(), snakehead);
-    snakehead = snakeloc(snakehead.y,snakehead.x);
-  }
-  else if(direction=='u'){
-    snaketail.insert(snaketail.begin(), snakehead);
-    snakehead = snakeloc(snakehead.y-1,snakehead.x);
-  }
-  else if(direction=='d'){
-    snaketail.insert(snaketail.begin(), snakehead);
-    snakehead = snakeloc(snakehead.y-1,snakehead.x);
-  }
-  move(snakehead.y,snakehead.x);
-  addch(' ');
-  refresh();
-  if(!fruitplus()){
-    move(snakebody[snakebody.size()-1].y, snakebody[snakebody.size()-1].x);
-    printw(" ");
-    refresh;
-    snakebody.pop_back();
-  }
-  return;
-
-
-}
-bool snakeclass::fruitplus(){
-  if(snakebody[0].x == fruit.x && snakebody[0].y ==fruit.y){
-    return eatfruit = true;
-  }
-  else{
-    return eatfruit = false;
-  }
-  return 0;
-}
-
-bool snakeclass::collision(){
-  //check snakehead
-  //opreventing collision
-  //snake head == snake body 
-
-    if (snakebody[0].y < 1 || snakebody[0].y > 21 || snakebody[0].x < 1 || snakebody[0].x > 21)
-        return true; //MapSize_X, MapSize_Y
-
-    for (int i=0; i<snakebody.size(); i++) {
-        if (snakebody[0].x==snakebody[i].x && snakebody[i].y == snakebody[0].y) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-void snakeclass::start(){
-  while(1){
-    if(collision()){
-      move(12,36);
-      printw("gameend");
+void snake::move(){
+  switch(direction){
+    case 'l':
+      tail = body[body.size()-1]; // 현재 꼬리부분 위치 저장 [나중에 아이템 먹었을 경우 이 부분을 push_back하면 길이가 늘어남]
+      for(int i = body.size()-1; i>0;i--) body[i]=body[i-1];  // 꼬리부터 머리까지 쉬프트 [머리 몸통1 꼬리가 있을 때 꼬리 = 몸통1, 몸통1 = 머리가 된다.]
+      body[0] = Point(body[0].x-1, body[0].y); // 머리부분 해당 방향으로 이동
+      head = body[0]; // head에 머리 위치 저장
       break;
-    }
-    movesnake();
-    if(direction=='q')
-    break;
-    usleep(del);
+    case 'u':
+      tail = body[body.size()-1];
+      for(int i = body.size()-1; i>0;i--) body[i]=body[i-1];
+      body[0] = Point(body[0].x, body[0].y-1);
+      head = body[0];
+      break;
+    case 'r':
+      tail = body[body.size()-1];
+      for(int i = body.size()-1; i>0;i--) body[i]=body[i-1];
+      body[0] = Point(body[0].x+1, body[0].y);
+      head = body[0];
+      break;
+    case 'd':
+      tail = body[body.size()-1];
+      for(int i = body.size()-1; i>0;i--) body[i]=body[i-1];
+      body[0] = Point(body[0].x, body[0].y+1);
+      head = body[0];
+      break;
   }
+}
+
+bool snake::crash_check(){
+  for(int i = 1; i < body.size(); i++){
+    if(head == body[i]){
+      return true;
+    }
+  }
+  return false;
+}
+void snake::set_direction(char direct){
+  switch(direct){
+    case 'a':
+      direction = 'l';
+      break;
+    case 'w':
+      direction = 'u';
+      break;
+    case 'd':
+      direction = 'r';
+      break;
+    case 's':
+      direction = 'd';
+      break;
+  }
+};
+
+vector<Point> snake::get_body(){
+  return body;
 }
