@@ -14,22 +14,16 @@ struct map_size map_size;
 
 void printScreen(char ***map);
 void push_snake(snake &snake, map &map);
-<<<<<<< HEAD
 void push_item(map& map, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate);
 bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate);
-=======
-void push_item(map& map, vector<Point> &heart, vector<Point> &poison);
-void crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &poison);
-int startscreen();
->>>>>>> e6212e2b4eb51978c290822c82dd0909d7a33230
 int main(){
   WINDOW *main_screen;  // 윈도우 생성
-  map_size.x=12;  // 맵 기본사이즈 설정
-  map_size.y=12;  // 맵 기본사이즈 설정
+  map_size.x=22;  // 맵 기본사이즈 설정
+  map_size.y=22;  // 맵 기본사이즈 설정
   setlocale(LC_ALL,""); // 특수문자 사용을위한 지역설정
   keypad(stdscr, TRUE); // 특수 키 값 입력 허용
   map map(map_size.x,map_size.y); // 맵 객체 생성
-  char*** test =map.get_map();  //  맵 수정을 위한 변수생성
+  char*** test = map.get_map();  //  맵 수정을 위한 변수생성
 
   initscr();
   start_color();
@@ -42,20 +36,11 @@ int main(){
   vector<Point> poison;
   vector<two_Point> gate;
   char Key; // 키입력을 받기위한 변수
-<<<<<<< HEAD
-=======
-  struct two_Point gate;
-
-
-  if(startscreen() == 'y'){
-  //do-while?
-
-
->>>>>>> e6212e2b4eb51978c290822c82dd0909d7a33230
   while(Key!=27){ // ESC입력시 while문 탈출
       curs_set(0);
       timeout(1);
       map.init_map(); // 맵 초기화
+      push_snake(snake, map);
       if(map.heart_count == 0){
         heart.push_back(map.item_create(true));  // 하트 생성  [뱀 길이 늘어남]
       }
@@ -65,17 +50,8 @@ int main(){
       if(gate.size()==0){
         gate.push_back(map.gate_create());
       }
-      string tmp(to_string(gate[0].p1.x));
-      mvprintw(1,0,tmp.c_str());
-      tmp = (to_string(gate[0].p1.y));
-      mvprintw(1,5,tmp.c_str());
-      tmp = (to_string(gate[0].p2.x));
-      mvprintw(2,0,tmp.c_str());
-      tmp = (to_string(gate[0].p2.y));
-      mvprintw(2,5,tmp.c_str());
       push_snake(snake, map);
       push_item(map, heart, poison, gate);
-
       test = map.get_map();
       // 화면에 맵 그리기.
       printScreen(test);
@@ -93,9 +69,6 @@ int main(){
         break;
       }
   }
-  }
-  string tmp(to_string(Key));
-  mvprintw(0,0,tmp.c_str());
   refresh();
   endwin();
   return 0;
@@ -111,8 +84,6 @@ void printScreen(char ***map){
 
 void push_snake(snake &snake, map &map){
   vector<Point> body = snake.get_body();
-  string tmp(to_string(body.size()));
-  mvprintw(0,0,tmp.c_str());
   for(int i=0; i<body.size();i++){
     map.push_map(body[i].x, body[i].y, "@");
   }
@@ -157,21 +128,29 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
       else if(gate[i].p2 == body[0]) {tmp = gate[i].p1; break;}
     }
     if(body[0].x - body[1].x > 0 && body[0].y == body[1].y ){
-      if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0){
+      if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x+1,tmp.y);
         snake.sethead(body[0]);
       }
-      else if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y+1);
         snake.sethead(body[0]);
         snake.set_direction('s');
       }
-      else if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y-1);
         snake.sethead(body[0]);
         snake.set_direction('w');
       }
-      else if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x-1,tmp.y);
         snake.sethead(body[0]);
         snake.set_direction('w');
@@ -179,21 +158,29 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
       }
     }
     else if(body[0].x - body[1].x < 0 && body[0].y == body[1].y ){
-      if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0){
+      if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x-1,tmp.y);
         snake.sethead(body[0]);
       }
-      else if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y-1);
         snake.sethead(body[0]);
         snake.set_direction('w');
       }
-      else if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y+1);
         snake.sethead(body[0]);
         snake.set_direction('s');
       }
-      else if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x+1,tmp.y);
         snake.sethead(body[0]);
         snake.set_direction('w');
@@ -201,21 +188,29 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
       }
     }
     else if(body[0].x == body[1].x && body[0].y - body[1].y >0 ){
-      if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0){
+      if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y+1);
         snake.sethead(body[0]);
       }
-      else if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x-1,tmp.y);
         snake.sethead(body[0]);
         snake.set_direction('a');
       }
-      else if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x+1,tmp.y);
         snake.sethead(body[0]);
         snake.set_direction('d');
       }
-      else if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y-1);
         snake.sethead(body[0]);
         snake.set_direction('a');
@@ -223,21 +218,29 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
       }
     }
     else if(body[0].x == body[1].x && body[0].y - body[1].y <0){
-      if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0){
+      if(strcmp(map.get_position(tmp.x,tmp.y-1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y-1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y-1);
         snake.sethead(body[0]);
       }
-      else if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x+1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x+1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x+1,tmp.y);
         snake.sethead(body[0]);
         snake.set_direction('d');
       }
-      else if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0 && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x-1,tmp.y), "■") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "▦") != 0
+      && strcmp(map.get_position(tmp.x-1,tmp.y), "⬚") != 0){
         body[0] = Point(tmp.x-1,tmp.y);
         snake.sethead(body[0]);
         snake.set_direction('a');
       }
-      else if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0 && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0){
+      else if(strcmp(map.get_position(tmp.x,tmp.y+1), "■") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "▦") != 0
+      && strcmp(map.get_position(tmp.x,tmp.y+1), "⬚") != 0){
         body[0] = Point(tmp.x,tmp.y+1);
         snake.sethead(body[0]);
         snake.set_direction('a');
@@ -254,31 +257,3 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
   }
   return false;
 }
-
-int startscreen(){
-  clear();
-  initscr();
-  move(10,13);
-  printw("start game? (y/n)");
-  int gameinput = getch();
-  refresh();
-  endwin();
-  clear();
-
-  return gameinput;
-}
-/*
-void ScoreBoard(){
-  int ScoreBoard = newwin( 15, 15, 30, 1); // 행크기, 열크기, xy좌표
-  int MissionBoard = newwin(15,15,30, 15);
-  box(ScoreBoard, 1,1);//세로, 가로 경계선 스타일
-  box(MissionBoard, 1,1);
-  mvwprintw(ScoreBoard, 0, 1, "ScoreBoard");
-  mvwprintw(MissionBoard, 0, 1, "MissionBoard");
-  //Board_b = body.length() + "/" +body.maxlength();
-  //mvprintw(scoreBoard, 2,2, b)
-  //행렬로 단계별 mission value받아오기
-
-
-
-}*/

@@ -25,21 +25,18 @@ map::map(int X, int Y) :MapSize_X(X),MapSize_Y(Y){
 }
 
 void map::init_map(){
-  strcpy(map_arr[0][0],"▦");
-  strcpy(map_arr[0][MapSize_X-1],"▦");
-  strcpy(map_arr[MapSize_Y-1][0],"▦");
-  strcpy(map_arr[MapSize_Y-1][MapSize_X-1],"▦");
-  for(int i = 1 ;i<MapSize_Y-1;i++){
-    strcpy(map_arr[i][0],"■");
-    strcpy(map_arr[i][MapSize_X-1],"■");
+  if(stage == 1){
+    for(int i = 0 ; i<MapSize_Y; i++){
+      for(int j = 0 ; j<MapSize_X; j++){
+        strcpy(map_arr[i][j],stage_1[i][j]);
+      }
+    }
   }
-  for(int i=1;i<MapSize_X-1;i++){
-    strcpy(map_arr[0][i],"■");
-    strcpy(map_arr[MapSize_Y-1][i],"■");
-  }
-  for(int i=1;i<MapSize_X-1;i++){
-    for(int j=1;j<MapSize_Y-1;j++){
-      strcpy(map_arr[j][i],"□");
+  else if(stage == 2){
+    for(int i = 0 ; i<MapSize_Y; i++){
+      for(int j = 0 ; j<MapSize_X; j++){
+        strcpy(map_arr[i][j],stage_2[i][j]);
+      }
     }
   }
 }
@@ -79,50 +76,15 @@ void map::delete_item(bool item_type){
 struct two_Point map::gate_create(){
   srand((unsigned int)time(NULL));
   struct Point gate_1,gate_2;
-  switch(rand()%4){
-    case 0:
-      gate_1.x = rand()%(MapSize_X-2)+1;
-      gate_1.y = 0;
-      break;
-    case 1:
-      gate_1.x = MapSize_X-1;
-      gate_1.y = rand()%(MapSize_Y-2)+1;
-      break;
-    case 2:
-      gate_1.x = rand()%(MapSize_X-2)+1;
-      gate_1.y = MapSize_Y-1;
-      break;
-    case 3:
-      gate_1.x = 0;
-      gate_1.y = rand()%(MapSize_Y-2)+1;
-      break;
-  }
-  switch(rand()%4){
-    case 0:
-      do{
-        gate_2.x = rand()%(MapSize_X-2)+1;
-        gate_2.y = 0;
-      }while(gate_1.x==gate_2.x && gate_1.y==gate_2.y);
-      break;
-    case 1:
-      do{
-        gate_2.x = MapSize_X-1;
-        gate_2.y = rand()%(MapSize_Y-2)+1;
-      }while(gate_1.x==gate_2.x && gate_1.y==gate_2.y);
-      break;
-    case 2:
-      do{
-        gate_2.x = rand()%(MapSize_X-2)+1;
-        gate_2.y = MapSize_Y-1;
-      }while(gate_1.x==gate_2.x && gate_1.y==gate_2.y);
-      break;
-    case 3:
-      do{
-        gate_2.x = 0;
-        gate_2.y = rand()%(MapSize_Y-2)+1;
-      }while(gate_1.x==gate_2.x && gate_1.y==gate_2.y);
-      break;
-  }
+  do{
+    gate_1.x = rand()%22;
+    gate_1.y = rand()%22;
+  }while(strcmp(map_arr[gate_1.y][gate_1.x],"■")!=0);
+  do{
+    gate_2.x = rand()%22;
+    gate_2.y = rand()%22;
+  }while(strcmp(map_arr[gate_2.y][gate_2.x],"■")!=0 && (gate_2.y!=gate_1.y || gate_2.x!=gate_1.x));
+
   strcpy(map_arr[gate_1.y][gate_1.x],"⬚");
   strcpy(map_arr[gate_2.y][gate_2.x],"⬚");
   return two_Point(gate_1, gate_2);
