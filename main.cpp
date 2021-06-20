@@ -16,6 +16,19 @@ void printScreen(char ***map);
 void push_snake(snake &snake, map &map);
 void push_item(map& map, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate);
 bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate);
+int startscreen();
+int heartscore = 0;
+int poisonscore = 0;
+int gatescore = 0;
+int mission[4][4] = {{7,1,0,1},{7,1,1,1},{7,2,1,0},{7,2,1,0}}; 
+int currentlevel=0;
+int snakebody = 0;
+int nextlevel_a=0;
+int nextlevel_b=0;
+int nextlevel_c=0;
+int nextlevel_d=0;
+
+
 int main(){
   WINDOW *main_screen;  // 윈도우 생성
   map_size.x=22;  // 맵 기본사이즈 설정
@@ -40,6 +53,7 @@ int main(){
   unsigned int tick_heart = 0;
   unsigned int tick_poison = 0;
   unsigned int tick_gate = 0;
+  if(startscreen() == 'y'){
 while(Key!=27){
   snake *Snake = new snake(map_size.x/2+1,map_size.y/2+1);
   heart.clear();
@@ -67,6 +81,56 @@ while(Key!=27){
       }
       push_snake(*Snake, map);
       push_item(map, heart, poison, gate);
+
+      mvprintw(1,50,"scoreboard");
+      string tmp = "B : ";
+      tmp += to_string(snakebody)+"/"+ to_string(mission[currentlevel][0]);
+      mvprintw(2,50,tmp.c_str());
+
+      tmp  ="+ : ";
+      tmp  += (to_string(heartscore));
+      mvprintw(3,50,tmp.c_str());
+
+      tmp  ="- : ";
+      tmp  +=(to_string(poisonscore));
+      mvprintw(4,50,tmp.c_str());
+
+      tmp  ="G : ";
+      tmp  +=(to_string(gatescore));
+      mvprintw(5,50,tmp.c_str());
+
+      mvprintw(7,50,"mission");
+      tmp  ="B : ";
+      tmp += to_string(mission[currentlevel][0]);
+      mvprintw(8,50,tmp.c_str());
+      if(snakebody>=mission[currentlevel][0]){
+        mvprintw(8,55,"(V)");
+        nextlevel_a=1;
+      }
+
+      tmp  ="+ : ";
+      tmp += to_string(mission[currentlevel][1]);
+      mvprintw(9,50,tmp.c_str());
+      if(heartscore>=mission[currentlevel][1]){
+        mvprintw(9,55,"(V)");
+        nextlevel_b=1;
+      }
+
+      tmp  ="- : ";
+      tmp += to_string(mission[currentlevel][2]);
+      mvprintw(10,50,tmp.c_str());
+      if(poisonscore>=mission[currentlevel][2]){
+        mvprintw(10,55,"(V)");
+        nextlevel_c=1;
+      }
+
+      tmp  ="G : ";
+      tmp += to_string(mission[currentlevel][3]);
+      mvprintw(11,50,tmp.c_str());
+      if(gatescore>=mission[currentlevel][3]){
+        mvprintw(11,55,"(V)");
+        nextlevel_d=1;
+      }
       test = map.get_map();
       // 화면에 맵 그리기.
       printScreen(test);
@@ -79,12 +143,35 @@ while(Key!=27){
       clear();
 
       Snake->move();
-      if(Snake->get_size()>15 && stage <3){
+      if(Snake->get_size()>=7 && stage <=3&&(nextlevel_a==1&&nextlevel_b==1&&nextlevel_c==1&&nextlevel_d==1)){
         map.setstage(++stage);
-        break;
+        currentlevel++;
+         heartscore = 0;
+ poisonscore = 0;
+ gatescore = 0;
+ snakebody = 0;
+nextlevel_a=0;
+ nextlevel_b=0;
+ nextlevel_c=0;
+ nextlevel_d=0;        break;
       }
-      else if(Snake->crash_check()) { map.setstage(1);stage=1; break;}
+      else if(Snake->crash_check()) { map.setstage(1);stage=1;currentlevel=0;heartscore = 0;
+ poisonscore = 0;
+ gatescore = 0;
+ snakebody = 0;
+ nextlevel_a=0;
+ nextlevel_b=0;
+ nextlevel_c=0;
+ nextlevel_d=0;  break; }
       else if(crash_check(map, *Snake, heart, poison, gate)){
+        currentlevel=0;heartscore = 0;
+ poisonscore = 0;
+ gatescore = 0;
+ snakebody = 0;
+nextlevel_a=0;
+ nextlevel_b=0;
+ nextlevel_c=0;
+ nextlevel_d=0;   
         map.setstage(1);
         stage =1;
         break;
@@ -99,7 +186,7 @@ while(Key!=27){
   delete Snake;
   refresh();
   endwin();
-}
+}}
 
   return 0;
 }
@@ -134,12 +221,15 @@ void push_item(map& map, vector<Point> &heart, vector<Point> &poison, vector<two
 
 bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &poison, vector<two_Point> &gate){
   vector<Point> body = snake.get_body();
+  snakebody = body.size();
 
   for(int i=0;i<heart.size();i++){
     if(body[0] == heart[i]){
       snake.getItem(true);
       map.delete_item(true);
       heart.erase(heart.begin()+i);
+            heartscore++;
+
       return false;
     }
   }
@@ -148,10 +238,14 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
       snake.getItem(false);
       map.delete_item(false);
       poison.erase(poison.begin()+i);
+            poisonscore++;
+
       return false;
     }
   }
   if(strcmp(map.get_position(body[0].x, body[0].y),"⬚")==0){
+        gatescore++;
+
     warptime += body.size();
     Point tmp;
     for(int i=0; i<gate.size();i++){
@@ -286,3 +380,16 @@ bool crash_check(map &map, snake &snake, vector<Point> &heart, vector<Point> &po
   }
   return false;
 }
+int startscreen(){
+  clear();
+  initscr();
+  move(10,13);
+  printw("start game? (y/n)");
+  int gameinput = getch();
+  refresh();
+  endwin();
+  clear();
+
+  return gameinput;
+}
+//if(startscreen() == 'y')
